@@ -67,16 +67,19 @@ if (len(tables) == 0):
     c.executemany(insertQuery, entries)
 
 #Print all entries in a table
-c.execute('''SELECT * FROM table0''')
+c.execute('''SELECT * FROM table1''')
 for row in c:
     print(row)
 
 #delete the table
 #c.execute("DROP TABLE table0")
 
+#TBD compare columns!
+#TBD compare values!
+
 #Create a new table and populate it. (After comparisons)
-c.execute(createQuery)
-c.executemany(insertQuery, entries)
+#c.execute(createQuery)
+#c.executemany(insertQuery, entries)
 
 
 #Ending
