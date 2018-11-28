@@ -2,12 +2,12 @@ import sqlite3
 import json
 
 #Read data from json (Socrata Database)
-f = open("somejson.txt", "r")
+f = open("simplejson3.txt", "r")
 content = f.read()
 dict_all = json.loads(content)
 
 #Connection to SQLite Database
-conn = sqlite3.connect('example2.db')
+conn = sqlite3.connect('simple.db',isolation_level=None)
 c = conn.cursor()
 
 #Get count of all tables in the database
@@ -65,6 +65,7 @@ if (len(tables) == 0):
     print("There are no tables")
     c.execute(createQuery)
     c.executemany(insertQuery, entries)
+    exit()
 
 #Print all entries in a table
 # c.execute('''SELECT * FROM table1''')
@@ -91,8 +92,10 @@ for i in range(len(latestColumns)):
 #TBD compare values!
 
 #Create a new table and populate it. (If there are any differences)
-#c.execute(createQuery)
-#c.executemany(insertQuery, entries)
+# if hasColumnChanged is False:
+#         print("hello")
+#         c.execute(createQuery)
+#         c.executemany(insertQuery, entries)
 
 
 #Ending
