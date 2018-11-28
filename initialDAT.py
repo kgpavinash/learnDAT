@@ -57,7 +57,7 @@ for x in range(len(columns)):
         questionList.append('?')
 insertQuery = ",".join(questionList)
 insertQuery = "INSERT INTO " + tableName + " VALUES (" + insertQuery + ")"
-print(insertQuery)
+#print(insertQuery)
 
 
 #if there are no tables, create the table and populate it. Name of table is "table" + number of tables
@@ -67,17 +67,30 @@ if (len(tables) == 0):
     c.executemany(insertQuery, entries)
 
 #Print all entries in a table
-c.execute('''SELECT * FROM table1''')
-for row in c:
-    print(row)
+# c.execute('''SELECT * FROM table1''')
+# for row in c:
+#     print(row)
 
 #delete the table
 #c.execute("DROP TABLE table0")
 
-#TBD compare columns!
+#comparing columns
+hasColumnChanged = False
+latestTable = "table" + str(len(tables) - 1)
+cursor = c.execute("SELECT * FROM "+latestTable)
+latestColumns = list(map(lambda x: x[0], cursor.description))
+print(latestColumns)
+print(columns)
+if len(columns) != len(latestColumns):
+        print("The number of columns have changed.")
+for i in range(len(latestColumns)):
+        if columns[i] != latestColumns[i]:
+                print("The columns have changed.")
+                hasColumnChanged = True
+                break        
 #TBD compare values!
 
-#Create a new table and populate it. (After comparisons)
+#Create a new table and populate it. (If there are any differences)
 #c.execute(createQuery)
 #c.executemany(insertQuery, entries)
 
