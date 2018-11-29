@@ -65,6 +65,8 @@ if (len(tables) == 0):
     print("There are no tables")
     c.execute(createQuery)
     c.executemany(insertQuery, entries)
+    conn.commit()
+    conn.close()
     exit()
 
 #Print all entries in a table
@@ -76,7 +78,6 @@ if (len(tables) == 0):
 #c.execute("DROP TABLE table0")
 
 #comparing columns
-hasColumnChanged = False
 latestTable = "table" + str(len(tables) - 1)
 cursor = c.execute("SELECT * FROM "+latestTable)
 latestColumns = list(map(lambda x: x[0], cursor.description))
@@ -84,11 +85,19 @@ print(latestColumns)
 print(columns)
 if len(columns) != len(latestColumns):
         print("The number of columns have changed.")
+        c.execute(createQuery)
+        c.executemany(insertQuery, entries)
+        conn.commit()
+        conn.close()
+        exit()
 for i in range(len(latestColumns)):
         if columns[i] != latestColumns[i]:
                 print("The columns have changed.")
-                hasColumnChanged = True
-                break        
+                c.execute(createQuery)
+                c.executemany(insertQuery, entries)
+                conn.commit()
+                conn.close()
+
 #TBD compare values!
 
 #Create a new table and populate it. (If there are any differences)
@@ -99,5 +108,5 @@ for i in range(len(latestColumns)):
 
 
 #Ending
-conn.commit()
-conn.close()
+# conn.commit()
+# conn.close()
