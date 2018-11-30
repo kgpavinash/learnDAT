@@ -55,6 +55,7 @@ print("---------------------------------")
 
 rowsRemovedCount = []
 leftJoinStatement = "SELECT COUNT(*) FROM table0 LEFT OUTER JOIN table1 ON table0.ndc = table1.ndc WHERE table1.year ISNULL"
+leftJoinStatement2 = "SELECT * FROM table0 LEFT OUTER JOIN table1 ON table0.ndc = table1.ndc"
 c.execute(leftJoinStatement)
 for row in c:
     print(row)
@@ -67,3 +68,24 @@ c.execute(revLeftJoinStatement)
 for row in c:
     print(row)
     rowsAddedCount.append(row)
+
+print("---------------------------------")
+
+checkEmpty = 0
+print(str(rowsRemovedCount[0][0])+ " rows has been removed from the old table which had "+str(oldTableRowsCount[0][0]) + " rows")
+print(str(rowsAddedCount[0][0])+ " rows has been added to the new table which had "+str(newTableRowsCount[0][0]) + " rows")
+if int(newTableRowsCount[0][0]) == 0:
+    print("Shrinkage of 100%")
+    print("Growth of 0%")
+    checkEmpty = 1
+if int(oldTableRowsCount[0][0]) == 0:
+    print("Shrinkage of 0%")
+    print("Growth of 100%")
+    checkEmpty = 1
+
+if checkEmpty == 0:
+    shrinkage = str(int(rowsRemovedCount[0][0]) / int(oldTableRowsCount[0][0]) * 100)
+    print("Shrinkage of "+shrinkage+"%")
+    
+    growth = str(int(rowsAddedCount[0][0]) / int(newTableRowsCount[0][0]) * 100)
+    print("Growth of "+growth+"%")
