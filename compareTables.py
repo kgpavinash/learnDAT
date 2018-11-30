@@ -36,42 +36,34 @@ latestColumns = list(map(lambda x: x[0], cursor.description))
 for col in latestColumns:
     print(col)
 
-joinStatement2 = "SELECT COUNT(*) FROM table0 INNER JOIN table1 ON ("
-for col in latestColumns:
-    joinStatement2 = joinStatement2 + "table0." + col + " = " + "table1." + col
-    joinStatement2 = joinStatement2 + " AND "
-joinStatement2 = joinStatement2[:-5] + ")"
-print(joinStatement2)
-
-commonRowsCount = []
-c.execute(joinStatement2)
-for row in c:
-    print(row)
-    commonRowsCount.append(row)
 
 oldTableRowsCount = []
 c.execute("SELECT COUNT(*) FROM table0")
 for row in c:
-    print(row)
+    #print(row)
     oldTableRowsCount.append(row)
 
 newTableRowsCount = []
 c.execute("SELECT COUNT(*) FROM table1")
 for row in c:
-    print(row)
+    #print(row)
     newTableRowsCount.append(row)
-print(newTableRowsCount[0][0])
+#print(newTableRowsCount[0][0])
 
-changeCount = 0
-if newTableRowsCount[0][0] != oldTableRowsCount[0][0]:
-    if newTableRowsCount[0][0] > oldTableRowsCount[0][0]:
-        changeCount = newTableRowsCount[0][0] - commonRowsCount[0][0]
-    else:
-        changeCount = oldTableRowsCount[0][0] - commonRowsCount[0][0]
-else:
-    if commonRowsCount == 0:
-        changeCount = newTableRowsCount[0][0]
-    else:
-        changeCount = newTableRowsCount[0][0] - commonRowsCount[0][0]
+#print(changeCount)
+print("---------------------------------")
 
-print(changeCount)
+rowsRemovedCount = []
+leftJoinStatement = "SELECT COUNT(*) FROM table0 LEFT OUTER JOIN table1 ON table0.ndc = table1.ndc WHERE table1.year ISNULL"
+c.execute(leftJoinStatement)
+for row in c:
+    print(row)
+    rowsRemovedCount.append(row)
+
+print("---------------------------------")
+rowsAddedCount = []
+revLeftJoinStatement = "SELECT  COUNT(*) FROM table1 LEFT OUTER JOIN table0 ON table0.ndc = table1.ndc WHERE table0.year ISNULL"
+c.execute(revLeftJoinStatement)
+for row in c:
+    print(row)
+    rowsAddedCount.append(row)
