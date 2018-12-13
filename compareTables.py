@@ -73,7 +73,7 @@ print("---------------------------------")
 
 checkEmpty = 0
 print(str(rowsRemovedCount[0][0])+ " rows has been removed from the old table which had "+str(oldTableRowsCount[0][0]) + " rows")
-print(str(rowsAddedCount[0][0])+ " rows has been added to the new table which had "+str(newTableRowsCount[0][0]) + " rows")
+print(str(rowsAddedCount[0][0])+ " rows has been added to the new table which now has "+str(newTableRowsCount[0][0]) + " rows")
 if int(newTableRowsCount[0][0]) == 0:
     print("Shrinkage of 100%")
     print("Growth of 0%")
@@ -92,15 +92,34 @@ if checkEmpty == 0:
 
 
 print("---------------------------------")
+#check for both null in the tables
+for col in latestColumns:
+    SelectColAll = "SELECT COUNT(table1." + col + ") FROM table1"
+    SelectColDifference = "SELECT table0." + col + " FROM table0, table1 WHERE table0.ndc = table1.ndc AND "+ "table0." + col + " <>" + " table1." + col
+    SelectColNull0 = "SELECT COUNT(*) FROM table0, table1 WHERE table0.ndc = table1.ndc AND table0." + col +  " ISNULL"
+    SelectColNull1 = "SELECT COUNT(*) FROM table0, table1 WHERE table0.ndc = table1.ndc AND table1." + col +  " ISNULL"
+    print(SelectColAll)
+    print(SelectColDifference)
+    print(SelectColNull0)
+    print(SelectColNull1)
+    c.execute(SelectColAll)
+    for row in c:
+        print(row)
 
-# for col in latestColumns:
-#     SelectColStatement = "SELECT table0.quarter" + " FROM table0, table1 WHERE table0.ndc = table1.ndc AND "+ "table0." + col + " <>" + " table1." + col
-#     print(SelectColStatement)
-#     c.execute(SelectColStatement)
-#     for row in c:
-#         print(row)
+print("---------------------------------")
 
-SelectColStatement = "SELECT table0.quarter FROM table0, table1 WHERE table0.ndc = table1.ndc AND (table0.quarter) <> (table1.quarter)"
-c.execute(SelectColStatement)
+print("For quarter")
+SelectColQuarter = "SELECT COUNT(*) FROM table0, table1 WHERE table0.ndc = table1.ndc AND (table0.quarter) <> (table1.quarter)"
+c.execute(SelectColQuarter)
+for row in c:
+    print(row)
+
+SelectColNullQuarter0 = "SELECT COUNT(*) FROM table0, table1 WHERE table0.ndc = table1.ndc AND table0.quarter ISNULL"
+c.execute(SelectColNullQuarter0)
+for row in c:
+    print(row)
+
+SelectColNullQuarter1 = "SELECT COUNT(*) FROM table0, table1 WHERE table0.ndc = table1.ndc AND table1.quarter ISNULL"
+c.execute(SelectColNullQuarter1)
 for row in c:
     print(row)
