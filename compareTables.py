@@ -89,3 +89,18 @@ if checkEmpty == 0:
     
     growth = str(int(rowsAddedCount[0][0]) / int(newTableRowsCount[0][0]) * 100)
     print("Growth of "+growth+"%")
+
+
+print("---------------------------------")
+
+# for col in latestColumns:
+#     SelectColStatement = "SELECT table0.quarter" + " FROM table0, table1 WHERE table0.ndc = table1.ndc AND "+ "table0." + col + " <>" + " table1." + col
+#     print(SelectColStatement)
+#     c.execute(SelectColStatement)
+#     for row in c:
+#         print(row)
+
+SelectColStatement = "SELECT table0.quarter FROM table0, table1 WHERE table0.ndc = table1.ndc AND (table0.quarter) <> (table1.quarter)"
+c.execute(SelectColStatement)
+for row in c:
+    print(row)
