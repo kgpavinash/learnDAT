@@ -92,34 +92,35 @@ if checkEmpty == 0:
 
 
 print("---------------------------------")
-#check for both null in the tables
+allRows = []
 for col in latestColumns:
-    SelectColAll = "SELECT COUNT(table1." + col + ") FROM table1"
-    SelectColDifference = "SELECT table0." + col + " FROM table0, table1 WHERE table0.ndc = table1.ndc AND "+ "table0." + col + " <>" + " table1." + col
-    SelectColNull0 = "SELECT COUNT(*) FROM table0, table1 WHERE table0.ndc = table1.ndc AND table0." + col +  " ISNULL"
-    SelectColNull1 = "SELECT COUNT(*) FROM table0, table1 WHERE table0.ndc = table1.ndc AND table1." + col +  " ISNULL"
+    SelectColAll = "SELECT COUNT(coalesce(table1." + col + ",0)) FROM table1"
+    SelectColDifference = "SELECT table0." + col + " FROM table0, table1 WHERE table0.ndc = table1.ndc AND "+ "(SELECT coalesce(table0." + col + ",0)) <> " + "(SELECT coalesce(table1." + col + ",0))"
     print(SelectColAll)
     print(SelectColDifference)
-    print(SelectColNull0)
-    print(SelectColNull1)
     c.execute(SelectColAll)
     for row in c:
         print(row)
+        allRows.append(row)
 
-print("---------------------------------")
+print(row[0])
 
-print("For quarter")
-SelectColQuarter = "SELECT COUNT(*) FROM table0, table1 WHERE table0.ndc = table1.ndc AND (table0.quarter) <> (table1.quarter)"
-c.execute(SelectColQuarter)
-for row in c:
-    print(row)
+# print("---------------------------------")
 
-SelectColNullQuarter0 = "SELECT COUNT(*) FROM table0, table1 WHERE table0.ndc = table1.ndc AND table0.quarter ISNULL"
-c.execute(SelectColNullQuarter0)
-for row in c:
-    print(row)
+# print("For quarter")
+# SelectColQuarter = "SELECT COUNT(*) FROM table0, table1 WHERE table0.ndc = table1.ndc AND (SELECT coalesce(table0.quarter,0)) <> (SELECT coalesce(table1.quarter,0))"
+# c.execute(SelectColQuarter)
+# for row in c:
+#     print(row)
 
-SelectColNullQuarter1 = "SELECT COUNT(*) FROM table0, table1 WHERE table0.ndc = table1.ndc AND table1.quarter ISNULL"
-c.execute(SelectColNullQuarter1)
-for row in c:
-    print(row)
+# print("---------------------------------")
+
+# SelectColNullQuarter0 = "SELECT COUNT(coalesce(table1.quarter,0)) FROM table1"
+# c.execute(SelectColNullQuarter0)
+# for row in c:
+#     print(row)
+
+# SelectColNullQuarter1 = "SELECT COUNT(*) FROM table0, table1 WHERE table0.ndc = table1.ndc AND table1.quarter ISNULL"
+# c.execute(SelectColNullQuarter1)
+# for row in c:
+#     print(row)
