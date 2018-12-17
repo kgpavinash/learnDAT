@@ -97,14 +97,22 @@ SelectColCount1 = "SELECT COUNT(coalesce(table1." + latestColumns[0] + ",0)) FRO
 ColCount1 = []
 c.execute(SelectColCount1)
 for row in c:
-    print(row)
     ColCount1.append(row)
 
 print(ColCount1[0][0])
 
+print("---------------------------------")
+
 for col in latestColumns:
-    SelectColDifference = "SELECT table0." + col + " FROM table0, table1 WHERE table0.ndc = table1.ndc AND "+ "(SELECT coalesce(table0." + col + ",0)) <> " + "(SELECT coalesce(table1." + col + ",0))"
+    SelectColDifference = "SELECT COUNT(coalesce(table0." + col + ",0)) FROM table0, table1 WHERE table0.ndc = table1.ndc AND "+ "(SELECT coalesce(table0." + col + ",0)) <> " + "(SELECT coalesce(table1." + col + ",0))"
     print(SelectColDifference)
+    c.execute(SelectColDifference)
+    for row in c:
+        print(row)
+        #print(row[0])
+        #print(ColCount1[0][0])
+        change = str(int(row[0]) / int(ColCount1[0][0]) * 100)
+        print("Change of "+change+"% in "+ col)
 
 # print("---------------------------------")
 
