@@ -92,18 +92,19 @@ if checkEmpty == 0:
 
 
 print("---------------------------------")
-allRows = []
-for col in latestColumns:
-    SelectColAll = "SELECT COUNT(coalesce(table1." + col + ",0)) FROM table1"
-    SelectColDifference = "SELECT table0." + col + " FROM table0, table1 WHERE table0.ndc = table1.ndc AND "+ "(SELECT coalesce(table0." + col + ",0)) <> " + "(SELECT coalesce(table1." + col + ",0))"
-    print(SelectColAll)
-    print(SelectColDifference)
-    c.execute(SelectColAll)
-    for row in c:
-        print(row)
-        allRows.append(row)
 
-print(row[0])
+SelectColCount1 = "SELECT COUNT(coalesce(table1." + latestColumns[0] + ",0)) FROM table1"
+ColCount1 = []
+c.execute(SelectColCount1)
+for row in c:
+    print(row)
+    ColCount1.append(row)
+
+print(ColCount1[0][0])
+
+for col in latestColumns:
+    SelectColDifference = "SELECT table0." + col + " FROM table0, table1 WHERE table0.ndc = table1.ndc AND "+ "(SELECT coalesce(table0." + col + ",0)) <> " + "(SELECT coalesce(table1." + col + ",0))"
+    print(SelectColDifference)
 
 # print("---------------------------------")
 
