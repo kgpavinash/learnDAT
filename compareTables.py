@@ -114,6 +114,13 @@ for col in latestColumns:
         change = str(int(row[0]) / int(ColCount1[0][0]) * 100)
         print("Change of "+change+"% in "+ col)
 
+
+hi = "SELECT (coalesce(table0." + latestColumns[0] + ",0)) FROM table0, table1 WHERE table0.ndc = table1.ndc AND "+ "(SELECT coalesce(table0." + latestColumns[0] + ",0)) <> " + "(SELECT coalesce(table1." + latestColumns[0] + ",0))"
+c.execute(hi)
+for row in c:
+        print(row)
+
+
 # print("---------------------------------")
 
 # print("For quarter")

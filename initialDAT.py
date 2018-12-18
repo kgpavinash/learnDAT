@@ -69,15 +69,6 @@ if (len(tables) == 0):
     conn.close()
     exit()
 
-
-#Print all entries in a table
-# c.execute('''SELECT * FROM table1''')
-# for row in c:
-#     print(row)
-
-#delete the table
-#c.execute("DROP TABLE table0")
-
 #comparing columns
 latestTable = "table" + str(len(tables) - 1)
 cursor = c.execute("SELECT * FROM "+latestTable)
@@ -156,19 +147,47 @@ if checkEmpty == 0:
     growth = str(int(rowsAddedCount[0][0]) / int(newTableRowsCount[0][0]) * 100)
     print("Growth of "+growth+"%")
 
+
+print("---------------------------------")
+
+SelectColCount1 = "SELECT COUNT(coalesce("+newTable+"." + latestColumns[0] + ",0)) FROM " +newTable
+ColCount1 = []
+c.execute(SelectColCount1)
+for row in c:
+    ColCount1.append(row)
+
+print(ColCount1[0][0])
+
+print("---------------------------------")
+
+c.execute("SELECT * FROM "+latestTable)
+for row in c:
+    print(row)
+
+print("---------------------------------")
+
+a = []
+c.execute("SELECT * FROM "+newTable)
+for row in c:
+    print(row)
+
+print("---------------------------------")
+
+
+for col in latestColumns:
+    SelectColDifference = "SELECT COUNT(coalesce("+latestTable+"." + col + ",0)) FROM "+latestTable+", "+newTable+" WHERE " +latestTable+".ndc = "+newTable+".ndc AND "+ "(SELECT coalesce("+latestTable+"." + col + ",0)) <> " + "(SELECT coalesce("+newTable+"." + col + ",0))"
+    print(SelectColDifference)
+    c.execute(SelectColDifference)
+    for row in c:
+        print(row)
+        #print(row[0])
+        #print(ColCount1[0][0])
+        change = str(int(row[0]) / int(ColCount1[0][0]) * 100)
+        print("Change of "+change+"% in "+ col)
+
+
 c.execute("DROP TABLE " + newTable)
 
 
-
-
-
-#Create a new table and populate it. (If there are any differences)
-# if hasColumnChanged is False:
-#         print("hello")
-#         c.execute(createQuery)
-#         c.executemany(insertQuery, entries)
-
-
-#Ending
-# conn.commit()
-# conn.close()
+conn.commit()
+conn.close()
