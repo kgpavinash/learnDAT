@@ -92,17 +92,18 @@ for i in range(len(latestColumns)):
                 exit()
 
 
-#TBD compare values! I have to create a new table in order to do value comparison
 
 print("---------------------------------")
 
-print(latestTable)
-print(tableName)
-
+#I have to create a new table in order to do value comparison
 newTable = tableName
 c.execute(createQuery)
 c.executemany(insertQuery, entries)
 
+print(latestTable)
+print(newTable)
+
+#Outer joins to check if rows have been added or removed
 rowsRemovedCount = []
 leftJoinStatement = "SELECT COUNT(*) FROM "+latestTable+" LEFT OUTER JOIN "+newTable+" ON "+latestTable+".ndc = "+newTable+".ndc WHERE "+newTable+".year ISNULL"
 c.execute(leftJoinStatement)
@@ -150,6 +151,7 @@ if checkEmpty == 0:
 
 print("---------------------------------")
 
+#Count number of values (including null) in a column
 SelectColCount1 = "SELECT COUNT(coalesce("+newTable+"." + latestColumns[0] + ",0)) FROM " +newTable
 ColCount1 = []
 c.execute(SelectColCount1)
@@ -160,20 +162,20 @@ print(ColCount1[0][0])
 
 print("---------------------------------")
 
+#print table values for manual comparison
 c.execute("SELECT * FROM "+latestTable)
 for row in c:
     print(row)
 
 print("---------------------------------")
 
-a = []
 c.execute("SELECT * FROM "+newTable)
 for row in c:
     print(row)
 
 print("---------------------------------")
 
-
+#compare values between the two tables
 for col in latestColumns:
     SelectColDifference = "SELECT COUNT(coalesce("+latestTable+"." + col + ",0)) FROM "+latestTable+", "+newTable+" WHERE " +latestTable+".ndc = "+newTable+".ndc AND "+ "(SELECT coalesce("+latestTable+"." + col + ",0)) <> " + "(SELECT coalesce("+newTable+"." + col + ",0))"
     print(SelectColDifference)
@@ -185,9 +187,9 @@ for col in latestColumns:
         change = str(int(row[0]) / int(ColCount1[0][0]) * 100)
         print("Change of "+change+"% in "+ col)
 
-
+#delete newtable if there are no changes. Delete always for now.
 c.execute("DROP TABLE " + newTable)
 
-
+#close connection
 conn.commit()
 conn.close()
