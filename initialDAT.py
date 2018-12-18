@@ -2,12 +2,12 @@ import sqlite3
 import json
 
 #Read data from json (Socrata Database)
-f = open("simplejson.txt", "r")
+f = open("somejson2.txt", "r")
 content = f.read()
 dict_all = json.loads(content)
 
 #Connection to SQLite Database
-conn = sqlite3.connect('testing0.db',isolation_level=None)
+conn = sqlite3.connect('testing1.db',isolation_level=None)
 c = conn.cursor()
 
 #Get count of all tables in the database
