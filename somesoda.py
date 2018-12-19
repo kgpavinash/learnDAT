@@ -18,7 +18,7 @@ jsonFormatQuarter = json.dumps(resultMaxQuarter,indent=4)
 dict_quarter = json.loads(jsonFormatQuarter)
 maxQuarter = dict_quarter[0]['max_quarter']
 
-finalQuery = 'SELECT * WHERE year = ' + maxyear +' AND quarter = '+maxQuarter+' ORDER BY ndc DESC LIMIT 10'
+finalQuery = 'SELECT * WHERE year = ' + maxyear +' AND quarter = '+maxQuarter+' ORDER BY ndc DESC LIMIT 50001'
 finalQuery2 = 'SELECT COUNT(*) WHERE year = ' + maxyear +' AND quarter = '+maxQuarter
 result = client.get(medic_identifier, query=finalQuery)
 #print(result)
@@ -32,7 +32,7 @@ jsonFormatMetadata = json.dumps(metadata, indent=4)
 #print(eh[0]['package_size_code'])
 #print(eh)
 
-f = open("somejson.txt", "w+")
+f = open("testjson.txt", "w+")
 f.write(jsonFormat)
 
 # a = "hi"

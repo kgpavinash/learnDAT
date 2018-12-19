@@ -2,20 +2,20 @@ import sqlite3
 import json
 
 #Read data from json (Socrata Database)
-f = open("somejson2.txt", "r")
+f = open("testjson.txt", "r")
 content = f.read()
 dict_all = json.loads(content)
 
 #Connection to SQLite Database
-conn = sqlite3.connect('testing1.db',isolation_level=None)
+conn = sqlite3.connect('testing3.db',isolation_level=None)
 c = conn.cursor()
 
 #Get count of all tables in the database
 c.execute("SELECT name FROM sqlite_master WHERE type='table';")
 tables = c.fetchall()
-for table in tables:
-        print(table)
-print(len(tables))
+# for table in tables:
+#         print(table)
+# print(len(tables))
 
 
 #Get the actual columns dynamically from the json and get the count of columns
@@ -36,7 +36,7 @@ createQuery = 'CREATE TABLE ' + tableName + "("
 for col in columns:
     createQuery = createQuery + col + " text" + ","
 createQuery = createQuery + "PRIMARY KEY (year, quarter, ndc))"
-#print(createQuery)
+print(createQuery)
 
 #Get all the entries from the json
 allData = []
@@ -44,7 +44,10 @@ i = 0
 entries = []
 for data in dict_all:
         for x in columns:
-            allData.append(dict_all[i][x])
+            try:
+                allData.append(dict_all[i][x])
+            except:
+                allData.append("~")
         entries.append(allData)
         allData = []
         i = i + 1
@@ -73,8 +76,8 @@ if (len(tables) == 0):
 latestTable = "table" + str(len(tables) - 1)
 cursor = c.execute("SELECT * FROM "+latestTable)
 latestColumns = list(map(lambda x: x[0], cursor.description))
-print(latestColumns)
-print(columns)
+#print(latestColumns)
+#print(columns)
 if len(columns) != len(latestColumns):
         print("The number of columns have changed.")
         c.execute(createQuery)
@@ -91,7 +94,7 @@ for i in range(len(latestColumns)):
                 conn.close()
                 exit()
 
-
+print("No Change in number/values of columns")
 
 print("---------------------------------")
 
@@ -100,21 +103,21 @@ newTable = tableName
 c.execute(createQuery)
 c.executemany(insertQuery, entries)
 
-print(latestTable)
-print(newTable)
+#print(latestTable)
+#print(newTable)
 
 #Outer joins to check if rows have been added or removed
 rowsRemovedCount = []
 leftJoinStatement = "SELECT COUNT(*) FROM "+latestTable+" LEFT OUTER JOIN "+newTable+" ON "+latestTable+".ndc = "+newTable+".ndc WHERE "+newTable+".year ISNULL"
 c.execute(leftJoinStatement)
 for row in c:
-    print(row)
+    #print(row)
     rowsRemovedCount.append(row)
 rowsAddedCount = []
 revLeftJoinStatement = "SELECT COUNT(*) FROM "+newTable+" LEFT OUTER JOIN "+latestTable+" ON "+latestTable+".ndc = "+newTable+".ndc WHERE "+latestTable+".year ISNULL"
 c.execute(revLeftJoinStatement)
 for row in c:
-    print(row)
+    #print(row)
     rowsAddedCount.append(row)
 
 latestTableRowsCount = []
@@ -132,7 +135,7 @@ for row in c:
 matchingNDCCount = []
 c.execute("SELECT COUNT(*) FROM "+latestTable+", "+newTable+" WHERE " +latestTable+".ndc = "+newTable+".ndc")
 for row in c:
-        print(row)
+        #print(row)
         matchingNDCCount.append(row)
 
 checkEmpty = 0
@@ -155,7 +158,6 @@ if checkEmpty == 0:
     print("Growth of "+growth+"%")
 
 
-print("---------------------------------")
 
 #Count number of values (including null) in a column
 SelectColCount1 = "SELECT COUNT(coalesce("+newTable+"." + latestColumns[0] + ",\"~\")) FROM " +newTable
@@ -164,30 +166,30 @@ c.execute(SelectColCount1)
 for row in c:
     ColCount1.append(row)
 
-print(ColCount1[0][0])
+# print(ColCount1[0][0])
 
 print("---------------------------------")
 
 #print table values for manual comparison
-c.execute("SELECT * FROM "+latestTable)
-for row in c:
-    print(row)
+# c.execute("SELECT * FROM "+latestTable)
+# for row in c:
+#     print(row)
 
-print("---------------------------------")
+# print("---------------------------------")
 
-c.execute("SELECT * FROM "+newTable)
-for row in c:
-    print(row)
+# c.execute("SELECT * FROM "+newTable)
+# for row in c:
+#     print(row)
 
-print("---------------------------------")
+# print("---------------------------------")
 
 #compare values between the two tables
 for col in latestColumns:
     SelectColDifference = "SELECT COUNT(coalesce("+latestTable+"." + col + ",\"~\")) FROM "+latestTable+", "+newTable+" WHERE " +latestTable+".ndc = "+newTable+".ndc AND "+ "(SELECT coalesce("+latestTable+"." + col + ",\"~\")) <> " + "(SELECT coalesce("+newTable+"." + col + ",\"~\"))"
-    print(SelectColDifference)
+    #print(SelectColDifference)
     c.execute(SelectColDifference)
     for row in c:
-        print(row)
+        #print(row)
         #print(row[0])
         #print(ColCount1[0][0])
         change = str(int(row[0]) / int(ColCount1[0][0]) * 100)
