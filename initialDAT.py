@@ -129,6 +129,12 @@ for row in c:
     #print(row)
     newTableRowsCount.append(row)
 
+matchingNDCCount = []
+c.execute("SELECT COUNT(*) FROM "+latestTable+", "+newTable+" WHERE " +latestTable+".ndc = "+newTable+".ndc")
+for row in c:
+        print(row)
+        matchingNDCCount.append(row)
+
 checkEmpty = 0
 print(str(rowsRemovedCount[0][0])+ " rows has been removed from the old table which had "+str(latestTableRowsCount[0][0]) + " rows")
 print(str(rowsAddedCount[0][0])+ " rows has been added to the new table which now has "+str(newTableRowsCount[0][0]) + " rows")
@@ -142,17 +148,17 @@ if int(latestTableRowsCount[0][0]) == 0:
     checkEmpty = 1
 
 if checkEmpty == 0:
-    shrinkage = str(int(rowsRemovedCount[0][0]) / int(latestTableRowsCount[0][0]) * 100)
+    shrinkage = str(int(rowsRemovedCount[0][0]) / int(matchingNDCCount[0][0]) * 100)
     print("Shrinkage of "+shrinkage+"%")
     
-    growth = str(int(rowsAddedCount[0][0]) / int(newTableRowsCount[0][0]) * 100)
+    growth = str(int(rowsAddedCount[0][0]) / int(matchingNDCCount[0][0]) * 100)
     print("Growth of "+growth+"%")
 
 
 print("---------------------------------")
 
 #Count number of values (including null) in a column
-SelectColCount1 = "SELECT COUNT(coalesce("+newTable+"." + latestColumns[0] + ",0)) FROM " +newTable
+SelectColCount1 = "SELECT COUNT(coalesce("+newTable+"." + latestColumns[0] + ",\"~\")) FROM " +newTable
 ColCount1 = []
 c.execute(SelectColCount1)
 for row in c:
@@ -177,7 +183,7 @@ print("---------------------------------")
 
 #compare values between the two tables
 for col in latestColumns:
-    SelectColDifference = "SELECT COUNT(coalesce("+latestTable+"." + col + ",0)) FROM "+latestTable+", "+newTable+" WHERE " +latestTable+".ndc = "+newTable+".ndc AND "+ "(SELECT coalesce("+latestTable+"." + col + ",0)) <> " + "(SELECT coalesce("+newTable+"." + col + ",0))"
+    SelectColDifference = "SELECT COUNT(coalesce("+latestTable+"." + col + ",\"~\")) FROM "+latestTable+", "+newTable+" WHERE " +latestTable+".ndc = "+newTable+".ndc AND "+ "(SELECT coalesce("+latestTable+"." + col + ",\"~\")) <> " + "(SELECT coalesce("+newTable+"." + col + ",\"~\"))"
     print(SelectColDifference)
     c.execute(SelectColDifference)
     for row in c:
