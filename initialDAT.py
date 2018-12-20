@@ -184,6 +184,7 @@ print("---------------------------------")
 # print("---------------------------------")
 
 #compare values between the two tables
+hasChanged = 0
 for col in latestColumns:
     SelectColDifference = "SELECT COUNT(coalesce("+latestTable+"." + col + ",\"~\")) FROM "+latestTable+", "+newTable+" WHERE " +latestTable+".ndc = "+newTable+".ndc AND "+ "(SELECT coalesce("+latestTable+"." + col + ",\"~\")) <> " + "(SELECT coalesce("+newTable+"." + col + ",\"~\"))"
     #print(SelectColDifference)
@@ -194,9 +195,25 @@ for col in latestColumns:
         #print(ColCount1[0][0])
         change = str(int(row[0]) / int(ColCount1[0][0]) * 100)
         print("Change of "+change+"% in "+ col)
+        if change != 0:
+                hasChanged = 1
 
 #delete newtable if there are no changes. Delete always for now.
-c.execute("DROP TABLE " + newTable)
+if (hasChanged == 0):
+        c.execute("DROP TABLE " + newTable)
+        conn.commit()
+        conn.close()
+        exit()
+if (shrinkage == 0):
+        c.execute("DROP TABLE " + newTable)
+        conn.commit()
+        conn.close()
+        exit()
+if (growth == 0):
+        c.execute("DROP TABLE " + newTable)
+        conn.commit()
+        conn.close()
+        exit()
 
 #close connection
 conn.commit()
