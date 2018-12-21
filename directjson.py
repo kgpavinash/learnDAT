@@ -48,9 +48,9 @@ for thing in somelist:
     if(thing["year"] == maxYear and thing["quarter"] == maxQuarter):
         updatedList.append(thing)
 
-
+print(len(updatedList))
 f = open("djson.txt", "w+")
-f.write(updatedList)
+f.write(str(updatedList))
 
 print("--- %s seconds ---" % (time.time() - start_time))
 
