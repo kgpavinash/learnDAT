@@ -1,32 +1,61 @@
-import urllib.request, json 
-with urllib.request.urlopen("https://data.medicaid.gov/resource/4qik-skk9.json?$limit=50000") as url:
-    data = json.loads(url.read().decode())
-    #output_dict = [x for x in data if x['year'] == '2018']
-    #print(output_dict)
-    #jsonFormat = json.dumps(data, indent=4)
-    #print(jsonFormat)
-    year = 0
-    for key in data:
-        if int(key['year']) > int(year):
-            year = key['year']
-    print(year)
-    output_dict = [x for x in data if x['ndc'] == "99207085060"]
+import urllib.request, json
+import ijson
 
-    print(output_dict)
+# columns = []
+# parser = ijson.parse(urllib.request.urlopen('https://data.medicaid.gov/resource/4qik-skk9.json?$limit=5'))
+# for prefix, event, value  in parser:
+#     if (event == 'map_key'):
+#         if value not in columns:
+#             columns.append(value)
+# print(columns)
 
-    # quarter = 0
-    # for key in output_dict:
-    #     #print(key['quarter'])
-    #     if int(key['quarter']) > int(quarter):
-    #         quarter = key['quarter']
-    # print(quarter)
+# print("----")
 
-    # print(output_dict)
-    # jsonFormat = json.dumps(output_dict, indent=4)
-    # print(jsonFormat)
+item_gen = ijson.items(urllib.request.urlopen('https://data.medicaid.gov/resource/4qik-skk9.json?$limit=5'), 'item')
+somelist = []
+other = item_gen
+for item in item_gen:
+    somelist.append(item)
+    #print(item)
+
+#print(somelist)
+#print(somelist[0]["year"])
+
+#print("----")
+
+s = str(somelist)
+
+mys = s.replace("'",'"')
+
+#print(mys)
+
+dict_all = json.loads(str(mys))
+#print(dict_all)
+
+allEntryColumns = []
+for data in dict_all:
+    for data2 in data.items():
+         allEntryColumns.append(data2[0])
+columns = []
+for x in allEntryColumns:
+    if x not in columns:
+        columns.append(x)
+print(columns)
+
+print("----")
+
+allData = []
+i = 0
+entries = []
+for data in dict_all:
+        for x in columns:
+            try:
+                allData.append(dict_all[i][x])
+            except:
+                allData.append("~")
+        entries.append(allData)
+        allData = []
+        i = i + 1
+print(entries[0])
+
     
-
-
-    # print(output_dict)
-    # jsonFormat = json.dumps(data, indent=4)
-    # print(jsonFormat)
