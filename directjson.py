@@ -1,7 +1,7 @@
 import urllib.request, json
 import ijson
 import time
-
+#  39,642
 # columns = []
 # parser = ijson.parse(urllib.request.urlopen('https://data.medicaid.gov/resource/4qik-skk9.json?$limit=5'))
 # for prefix, event, value  in parser:
@@ -15,9 +15,8 @@ import time
 start_time = time.time()
 print(start_time)
 
-item_gen = ijson.items(urllib.request.urlopen('https://data.medicaid.gov/resource/4qik-skk9.json?$limit=646259'), 'item')
+item_gen = ijson.items(urllib.request.urlopen('https://data.medicaid.gov/resource/4qik-skk9.json?$limit=10'), 'item')
 somelist = []
-other = item_gen
 for item in item_gen:
     somelist.append(item)
     #print(item)
@@ -49,30 +48,27 @@ for thing in somelist:
         updatedList.append(thing)
 
 print(len(updatedList))
-f = open("djson.txt", "w+")
-f.write(str(updatedList))
-
-print("--- %s seconds ---" % (time.time() - start_time))
 
 
-# s = str(somelist)
+# s = str(updatedList)
+# f = open("djson.txt", "w+")
+# f.write(str(s))
 
-# mys = s.replace("'",'"')
+with open('your_file.txt', 'w+') as f:
+    for item in updatedList:
+        f.write("%s\n" % item)
 
-# #print(mys)
+dict_all = updatedList
 
-# dict_all = json.loads(str(mys))
-# #print(dict_all)
-
-# allEntryColumns = []
-# for data in dict_all:
-#     for data2 in data.items():
-#          allEntryColumns.append(data2[0])
-# columns = []
-# for x in allEntryColumns:
-#     if x not in columns:
-#         columns.append(x)
-# print(columns)
+allEntryColumns = []
+for data in dict_all:
+    for data2 in data.items():
+         allEntryColumns.append(data2[0])
+columns = []
+for x in allEntryColumns:
+    if x not in columns:
+        columns.append(x)
+print(columns)
 
 # print("----")
 
