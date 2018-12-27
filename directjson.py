@@ -47,7 +47,7 @@ for thing in somelist:
     if(thing["year"] == maxYear and thing["quarter"] == maxQuarter):
         updatedList.append(thing)
 
-print(len(updatedList))
+print(updatedList)
 
 
 # s = str(updatedList)
