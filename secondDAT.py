@@ -41,8 +41,29 @@ while index != int(fileCount):
 
 print(columns)
 print(len(entries))
-print(entries)
+# print(entries)
 
+# finalQuery = 'SELECT * WHERE year = ' + maxyear +' AND quarter = '+maxQuarter+' ORDER BY ndc DESC LIMIT 50000'
+# result = client.get(medic_identifier, query=finalQuery)
+# jsonFormat = json.dumps(result, indent=4)
+# f = open("jsonResult0.txt", "w+")
+# f.write(jsonFormat)
+# finalQuery3 = 'SELECT * WHERE year = ' + maxyear +' AND quarter = '+maxQuarter+' ORDER BY ndc DESC OFFSET 50000 LIMIT 50000'
 
+# countFile = 0
+# countOffset = 50000
+# result = client.get(medic_identifier, query=finalQuery3)
+# while result:
+#     countFile = countFile + 1
+#     countOffset = countOffset + 50000
+#     jsonFormat = json.dumps(result, indent=4)
+#     f = open("jsonResult"+str(countFile)+".txt", "w+")
+#     f.write(jsonFormat)
+#     finalQuery3 = 'SELECT * WHERE year = ' + maxyear +' AND quarter = '+maxQuarter+' ORDER BY ndc DESC OFFSET '+str(countOffset)+' LIMIT 50000'
+#     result = client.get(medic_identifier, query=finalQuery3)
+
+# #write count of files to file.
+# f = open("countFile.txt", "w+")
+# f.write(str(countFile))
 
 
