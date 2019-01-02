@@ -10,7 +10,7 @@ finalQuery2 = 'SELECT * OFFSET 2 LIMIT 3'
 finalQuery3 = 'SELECT * LIMIT 5'
 result = client.get(medic_identifier, query=finalQuery)
 jsonFormat = json.dumps(result, indent=4)
-print(jsonFormat)
+# print(jsonFormat)
 result = client.get(medic_identifier, query=finalQuery2)
 jsonFormat2 = json.dumps(result, indent=4)
 #print(jsonFormat2)
@@ -20,4 +20,8 @@ jsonFormat3 = json.dumps(result, indent=4)
 #print(jsonFormat3)
 
 combjson = jsonFormat2 + jsonFormat3
-print(combjson)
+# print(combjson)
+
+f = open("countFile.txt", "r")
+content = f.read()
+print(content)
