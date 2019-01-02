@@ -20,6 +20,7 @@ maxQuarter = dict_quarter[0]['max_quarter']
 
 finalQuery = 'SELECT * WHERE year = ' + maxyear +' AND quarter = '+maxQuarter+' ORDER BY ndc DESC LIMIT 50000'
 finalQuery2 = 'SELECT COUNT(*) WHERE year = ' + maxyear +' AND quarter = '+maxQuarter
+finalQuery3 = 'SELECT * WHERE year = ' + maxyear +' AND quarter = '+maxQuarter+' ORDER BY ndc DESC OFFSET 39640 LIMIT 50000'
 result = client.get(medic_identifier, query=finalQuery)
 #print(result)
 jsonFormat = json.dumps(result, indent=4)
@@ -38,6 +39,18 @@ f.write(jsonFormat)
 
 result = client.get(medic_identifier, query=finalQuery2)
 print(result)
+print("-----")
+countFile = 0
+countOffset = 50000
+result = client.get(medic_identifier, query=finalQuery3)
+while result:
+    countFile = countFile + 1
+    countOffset = countOffset + 50000
+    jsonFormat = json.dumps(result, indent=4)
+    f = open("jsonResult"+str(countFile)+".txt", "w+")
+    f.write(jsonFormat)
+    finalQuery3 = 'SELECT * WHERE year = ' + maxyear +' AND quarter = '+maxQuarter+' ORDER BY ndc DESC OFFSET '+str(countOffset)+' LIMIT 50000'
+    result = client.get(medic_identifier, query=finalQuery3)
 
 
 
