@@ -9,15 +9,15 @@ c = conn.cursor()
 c.execute("SELECT name FROM sqlite_master WHERE type='table';")
 tables = c.fetchall()
 
+#Get all columns and entries from all files.
 columns = []
 entries = []
-
 f = open("countFile.txt", "r")
 fileCount = f.read()
-i = -1
-while i != int(fileCount):
-    i = i + 1
-    f = open("jsonResult"+str(i)+".txt", "r")
+index = -1
+while index != int(fileCount):
+    index = index + 1
+    f = open("jsonResult"+str(index)+".txt", "r")
     content = f.read()
     dict_all = json.loads(content)
     allEntryColumns = []
@@ -27,9 +27,21 @@ while i != int(fileCount):
     for x in allEntryColumns:
         if x not in columns:
             columns.append(x)
+    allData = []
+    i = 0
+    for data in dict_all:
+        for x in columns:
+            try:
+                allData.append(dict_all[i][x])
+            except:
+                allData.append("~")
+        entries.append(allData)
+        allData = []
+        i = i + 1
 
 print(columns)
-
+print(len(entries))
+print(entries)
 
 
 

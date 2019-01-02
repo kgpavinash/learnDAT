@@ -1,6 +1,6 @@
 [
     {
-        "package_size_code": "60",
+        "package_size_code": "63",
         "fda_ther_equiv_code": "NR",
         "fda_application_number": "204153",
         "clotting_factor_indicator": "N",
@@ -22,7 +22,7 @@
         "cod_status": "3"
     },
     {
-        "package_size_code": "60",
+        "package_size_code": "64",
         "fda_ther_equiv_code": "AB",
         "fda_application_number": "21758",
         "clotting_factor_indicator": "N",
