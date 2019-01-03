@@ -59,9 +59,13 @@ insertQuery = "INSERT INTO " + tableName + " VALUES (" + insertQuery + ")"
 #if there are no tables, create the table and populate it. Name of table is "table" + number of tables (Takes around 6 minutes)
 if (len(tables) == 0):
     print("There are no tables")
+    # c.execute(createQuery)
+    # c.executemany(insertQuery, entries)
+    # conn.commit()
+    c.execute("begin")
     c.execute(createQuery)
     c.executemany(insertQuery, entries)
-    conn.commit()
+    c.execute("commit")
     conn.close()
     exit()
 

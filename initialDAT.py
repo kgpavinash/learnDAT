@@ -66,9 +66,9 @@ insertQuery = "INSERT INTO " + tableName + " VALUES (" + insertQuery + ")"
 #if there are no tables, create the table and populate it. Name of table is "table" + number of tables
 if (len(tables) == 0):
     print("There are no tables")
-    c.execute(createQuery)
-    c.executemany(insertQuery, entries)
-    conn.commit()
+#     c.execute(createQuery)
+#     c.executemany(insertQuery, entries)
+#     conn.commit()
     conn.close()
     exit()
 
