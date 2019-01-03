@@ -169,25 +169,25 @@ for col in latestColumns:
         #print(ColCount1[0][0])
         change = str(int(row[0]) / int(ColCount1[0][0]) * 100)
         print("Change of "+change+"% in "+ col)
-        if change != 0:
+        if change != '0.0':
                 hasChanged = 1
 
 #delete newtable if there are no changes.
-if (hasChanged == 0):
+if (hasChanged == 0 and shrinkage == '0.0' and growth == '0.0'):
         c.execute("DROP TABLE " + newTable)
         conn.commit()
         conn.close()
         exit()
-if (shrinkage == 0):
-        c.execute("DROP TABLE " + newTable)
-        conn.commit()
-        conn.close()
-        exit()
-if (growth == 0):
-        c.execute("DROP TABLE " + newTable)
-        conn.commit()
-        conn.close()
-        exit()
+# if (shrinkage == '0.0'):
+#         c.execute("DROP TABLE " + newTable)
+#         conn.commit()
+#         conn.close()
+#         exit()
+# if (growth == '0.0'):
+#         c.execute("DROP TABLE " + newTable)
+#         conn.commit()
+#         conn.close()
+#         exit()
 
 # print(columns)
 # print(len(entries))
