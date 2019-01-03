@@ -39,8 +39,34 @@ while index != int(fileCount):
         allData = []
         i = i + 1
 
-print(columns)
-print(len(entries))
+#Create the CREATE table query. For now, all datatypes are text. Clarify
+tableName = "table" + str(len(tables))
+createQuery = 'CREATE TABLE ' + tableName + "("
+for col in columns:
+    createQuery = createQuery + col + " text" + ","
+createQuery = createQuery + "PRIMARY KEY (year, quarter, ndc))"
+# print(createQuery)
+
+#calculate number of questions marks. Needed as synthax of insert is c.executemany("INSERT INTO table VALUES (?,?,?,?,?...)", entries)
+#Create INSERT query
+questionList = []
+for x in range(len(columns)):
+        questionList.append('?')
+insertQuery = ",".join(questionList)
+insertQuery = "INSERT INTO " + tableName + " VALUES (" + insertQuery + ")"
+# print(insertQuery)
+
+#if there are no tables, create the table and populate it. Name of table is "table" + number of tables (Takes around 6 minutes)
+if (len(tables) == 0):
+    print("There are no tables")
+    c.execute(createQuery)
+    c.executemany(insertQuery, entries)
+    conn.commit()
+    conn.close()
+    exit()
+
+# print(columns)
+# print(len(entries))
 # print(entries)
 
 # finalQuery = 'SELECT * WHERE year = ' + maxyear +' AND quarter = '+maxQuarter+' ORDER BY ndc DESC LIMIT 50000'
