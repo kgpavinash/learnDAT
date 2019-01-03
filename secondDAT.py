@@ -177,6 +177,7 @@ if (hasChanged == 0 and shrinkage == '0.0' and growth == '0.0'):
         c.execute("DROP TABLE " + newTable)
         conn.commit()
         conn.close()
+        print("No changes. The newtable is deleted")
         exit()
 # if (shrinkage == '0.0'):
 #         c.execute("DROP TABLE " + newTable)
