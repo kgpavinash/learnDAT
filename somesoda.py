@@ -59,6 +59,7 @@ print("-----")
 # f = open("countFile.txt", "w+")
 # f.write(str(countFile))
 
+#keep looping until no more results are obtained from socrata. Write to file every 50,000 results. increment file count and offset after every write.
 countFiles = 0
 countOffset = 0
 while 1:
@@ -72,6 +73,5 @@ while 1:
     countOffset = countOffset + 50000
     countFiles = countFiles + 1
 
-countFiles = countFiles - 1
-f = open("countFile.txt", "w+")
+f = open("countFiles.txt", "w+")
 f.write(str(countFiles))

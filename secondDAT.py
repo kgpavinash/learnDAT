@@ -12,11 +12,10 @@ tables = c.fetchall()
 #Get all columns and entries from all files.
 columns = []
 entries = []
-f = open("countFile.txt", "r")
+f = open("countFiles.txt", "r")
 fileCount = f.read()
-index = -1
+index = 0
 while index != int(fileCount):
-    index = index + 1
     f = open("jsonResult"+str(index)+".txt", "r")
     content = f.read()
     dict_all = json.loads(content)
@@ -38,6 +37,7 @@ while index != int(fileCount):
         entries.append(allData)
         allData = []
         i = i + 1
+    index = index + 1
 
 #Create the CREATE table query. For now, all datatypes are text. Clarify
 tableName = "table" + str(len(tables))
