@@ -77,17 +77,25 @@ latestColumns = list(map(lambda x: x[0], cursor.description))
 #print(columns)
 if len(columns) != len(latestColumns):
         print("The number of columns have changed.")
+        # c.execute(createQuery)
+        # c.executemany(insertQuery, entries)
+        # conn.commit()
+        c.execute("begin")
         c.execute(createQuery)
         c.executemany(insertQuery, entries)
-        conn.commit()
+        c.execute("commit")
         conn.close()
         exit()
 for i in range(len(latestColumns)):
         if columns[i] != latestColumns[i]:
                 print("The columns have changed.")
+                # c.execute(createQuery)
+                # c.executemany(insertQuery, entries)
+                # conn.commit()
+                c.execute("begin")
                 c.execute(createQuery)
                 c.executemany(insertQuery, entries)
-                conn.commit()
+                c.execute("commit")
                 conn.close()
                 exit()
 
@@ -97,8 +105,12 @@ print("---------------------------------")
 
 #I have to create a new table in order to do value comparison
 newTable = tableName
+# c.execute(createQuery)
+# c.executemany(insertQuery, entries)
+c.execute("begin")
 c.execute(createQuery)
 c.executemany(insertQuery, entries)
+c.execute("commit")
 
 #Outer joins to check if rows have been added/removed. Gets count of rows added/removed
 rowsRemovedCount = []
@@ -183,6 +195,9 @@ if (hasChanged == 0 and shrinkage == '0.0' and growth == '0.0'):
         conn.close()
         print("No changes. The newtable is deleted")
         exit()
+
+conn.commit()
+conn.close()
 # if (shrinkage == '0.0'):
 #         c.execute("DROP TABLE " + newTable)
 #         conn.commit()
