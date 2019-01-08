@@ -8,17 +8,17 @@ client = Socrata(medic_domain,None)
 
 #Get the latest year
 resultMaxYear = client.get(medic_identifier, query='SELECT MAX(year)')
-jsonFormatYear = json.dumps(resultMaxYear, indent=4)
-dict_year = json.loads(jsonFormatYear)
-#print(dict_year[0]['max_year'])
-maxyear = dict_year[0]['max_year']
+# jsonFormatYear = json.dumps(resultMaxYear, indent=4)
+# dict_year = json.loads(jsonFormatYear)
+# #print(dict_year[0]['max_year'])
+maxyear = resultMaxYear[0]['max_year']
 
 #Get the latest quarter from the latest year
 quarterQuery = 'SELECT MAX(quarter) where year = ' +maxyear
 resultMaxQuarter = client.get(medic_identifier, query=quarterQuery)
-jsonFormatQuarter = json.dumps(resultMaxQuarter,indent=4)
-dict_quarter = json.loads(jsonFormatQuarter)
-maxQuarter = dict_quarter[0]['max_quarter']
+# jsonFormatQuarter = json.dumps(resultMaxQuarter,indent=4)
+# dict_quarter = json.loads(jsonFormatQuarter)
+maxQuarter = resultMaxQuarter[0]['max_quarter']
 
 #Queries to be used. Limited to 50,000 results per call. Get first 50,000. 
 finalQuery = 'SELECT * WHERE year = ' + maxyear +' AND quarter = '+maxQuarter+' ORDER BY ndc DESC LIMIT 50000'
