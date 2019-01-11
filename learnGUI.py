@@ -1,5 +1,7 @@
 from tkinter import *
 from math import *
+import sqlite3
+import json
 # top = Tk()
 # top.title("Data Acquisition Tool")
 # top.geometry('400x500')
@@ -96,33 +98,128 @@ from math import *
 # res.grid(row=2, column=0)
 # master.mainloop()
 
+columns = []
+entries = []
+f = open("countFiles.txt", "r")
+fileCount = f.read()
+index = 0
+while index != int(fileCount):
+    f = open("jsonResult"+str(index)+".txt", "r")
+    content = f.read()
+    dict_all = json.loads(content)
+    allEntryColumns = []
+    for data in dict_all:
+        for data2 in data.items():
+            allEntryColumns.append(data2[0])
+    for x in allEntryColumns:
+        if x not in columns:
+            columns.append(x)
+    allData = []
+    i = 0
+    for data in dict_all:
+        for x in columns:
+            try:
+                allData.append(dict_all[i][x])
+            except:
+                allData.append("~")
+        entries.append(allData)
+        allData = []
+        i = i + 1
+    index = index + 1
+
+
+
 master = Tk()
 master.geometry('800x800')
 master.title("Data Acquisition Tool")
 # master.geometry('800x500')
 lst = ['package_size_code', 'fda_ther_equiv_code', 'fda_application_number', 'clotting_factor_indicator','year','fda_product_name','sdfsdf','sdfsdf','dsfd']
-entries = []
+ents = []
 i = 0
 j = 1
 k = 1
-for e in lst:
+for e in columns:
     if i != 0 and i % 4 == 0:
         j = j + 4
-        k = k + 1.3
+        k = k + 1.35
         i = 0
         print("hello")
-    lab = Label(master, text = e + "%")
+    lab = Label(master, text = e)
     lab.place(x = (i * 200), y = 10 * j)
     e = Entry(master,width=5)
     e.insert(0,"10%")
     e.place(x = (i * 200), y = 30 * k)
-    entries.append(e)
+    ents.append(e)
     i = i + 1
 #     Button(master,text=e, height=1,width=1,background="light blue",font=("Courier", 15)).grid(row=i, column=0,padx=10, pady=10)
 def started():
+    # showText = []
+    #Connection to SQLite Database
+    conn = sqlite3.connect('testing3.db',isolation_level=None)
+    c = conn.cursor()
+    c.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = c.fetchall()
+
+    #Create the CREATE table query. For now, all datatypes are text. Clarify
+    tableName = "table" + str(len(tables))
+    createQuery = 'CREATE TABLE ' + tableName + "("
+    for col in columns:
+        createQuery = createQuery + col + " text" + ","
+    createQuery = createQuery + "PRIMARY KEY (year, quarter, ndc))"
+
+    #calculate number of questions marks. Needed as synthax of insert is c.executemany("INSERT INTO table VALUES (?,?,?,?,?...)", entries)
+    #Create INSERT query
+    questionList = []
+    for x in range(len(columns)):
+        questionList.append('?')
+    insertQuery = ",".join(questionList)
+    insertQuery = "INSERT INTO " + tableName + " VALUES (" + insertQuery + ")"
+    
+    if (len(tables) == 0):   
+        print("There are no tables")
+        # c.execute(createQuery)
+        # c.executemany(insertQuery, entries)
+        # conn.commit()
+        c.execute("begin")
+        c.execute(createQuery)
+        c.executemany(insertQuery, entries)
+        c.execute("commit")
+        conn.close()
+        exit()
+
+    #comparing columns
+    latestTable = "table" + str(len(tables) - 1)
+    cursor = c.execute("SELECT * FROM "+latestTable)
+    latestColumns = list(map(lambda x: x[0], cursor.description))
+    #print(latestColumns)
+    #print(columns)
+    if len(columns) != len(latestColumns):
+        print("The number of columns have changed.")
+        # c.execute(createQuery)
+        # c.executemany(insertQuery, entries)
+        # conn.commit()
+        c.execute("begin")
+        c.execute(createQuery)
+        c.executemany(insertQuery, entries)
+        c.execute("commit")
+        conn.close()
+        exit()
+    for i in range(len(latestColumns)):
+        if columns[i] != latestColumns[i]:
+                print("The columns have changed.")
+                # c.execute(createQuery)
+                # c.executemany(insertQuery, entries)
+                # conn.commit()
+                c.execute("begin")
+                c.execute(createQuery)
+                c.executemany(insertQuery, entries)
+                c.execute("commit")
+                conn.close()
+                exit()
     textResult.delete('0.0',END)
-    s = entries[1].get()
+    s = "No Change in number/values of columns\n---------------------------------"
     textResult.insert(INSERT, s)
+    return
 def reset():
     textResult.delete('0.0',END)
     textResult.insert(INSERT, "Process has reset")
