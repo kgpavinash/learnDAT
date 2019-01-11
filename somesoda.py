@@ -60,6 +60,7 @@ print("-----")
 # f.write(str(countFile))
 
 #keep looping until no more results are obtained from socrata. Write to file every 50,000 results. increment file count and offset after every write.
+#maxQuarter = "2"
 countFiles = 0
 countOffset = 0
 while 1:
