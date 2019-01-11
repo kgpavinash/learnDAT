@@ -216,6 +216,102 @@ def started():
                 c.execute("commit")
                 conn.close()
                 exit()
+    
+    #I have to create a new table in order to do value comparison
+    newTable = tableName
+    # c.execute(createQuery)
+    # c.executemany(insertQuery, entries)
+    c.execute("begin")
+    c.execute(createQuery)
+    c.executemany(insertQuery, entries)
+    c.execute("commit")
+
+    #Outer joins to check if rows have been added/removed. Gets count of rows added/removed
+    rowsRemovedCount = []
+    leftJoinStatement = "SELECT COUNT(*) FROM "+latestTable+" LEFT OUTER JOIN "+newTable+" ON "+latestTable+".ndc = "+newTable+".ndc WHERE "+newTable+".year ISNULL"
+    c.execute(leftJoinStatement)
+    for row in c:
+        #print(row)
+        rowsRemovedCount.append(row)
+    rowsAddedCount = []
+    revLeftJoinStatement = "SELECT COUNT(*) FROM "+newTable+" LEFT OUTER JOIN "+latestTable+" ON "+latestTable+".ndc = "+newTable+".ndc WHERE "+latestTable+".year ISNULL"
+    c.execute(revLeftJoinStatement)
+    for row in c:
+        #print(row)
+        rowsAddedCount.append(row)
+
+    #Gets number of rows from the latest table in the database
+    latestTableRowsCount = []
+    c.execute("SELECT COUNT(*) FROM "+latestTable)
+    for row in c:
+        #print(row)
+        latestTableRowsCount.append(row)
+    
+    #Gets number of rows from the new table just inserted into database
+    newTableRowsCount = []
+    c.execute("SELECT COUNT(*) FROM "+newTable)
+    for row in c:
+        #print(row)
+        newTableRowsCount.append(row)
+    
+    #Gets count of rows which has same NDC between latest and new table. (Compare with matching NDC)
+    matchingNDCCount = []
+    c.execute("SELECT COUNT(*) FROM "+latestTable+", "+newTable+" WHERE " +latestTable+".ndc = "+newTable+".ndc")
+    for row in c:
+        #print(row)
+        matchingNDCCount.append(row)
+    
+    checkEmpty = 0
+    print(str(rowsRemovedCount[0][0])+ " rows has been removed from the old table which had "+str(latestTableRowsCount[0][0]) + " rows")
+    print(str(rowsAddedCount[0][0])+ " rows has been added to the new table which now has "+str(newTableRowsCount[0][0]) + " rows")
+    if int(newTableRowsCount[0][0]) == 0:
+        print("Shrinkage of 100%")
+        print("Growth of 0%")
+        checkEmpty = 1
+    if int(latestTableRowsCount[0][0]) == 0:
+        print("Shrinkage of 0%")
+        print("Growth of 100%")
+        checkEmpty = 1
+    
+    if checkEmpty == 0:
+        shrinkage = str(int(rowsRemovedCount[0][0]) / int(matchingNDCCount[0][0]) * 100)
+        print("Shrinkage of "+shrinkage+"%")
+
+        growth = str(int(rowsAddedCount[0][0]) / int(matchingNDCCount[0][0]) * 100)
+        print("Growth of "+growth+"%")
+    
+    #Count number of values (including null) in a column (Maybe change this to just count rows in any one column. Same thing)
+    SelectColCount1 = "SELECT COUNT(coalesce("+newTable+"." + latestColumns[0] + ",\"~\")) FROM " +newTable
+    ColCount1 = []
+    c.execute(SelectColCount1)
+    for row in c:
+        ColCount1.append(row)
+    
+    #compare values of every element in each column between two tables where the NDC matches
+    hasChanged = 0
+    for col in latestColumns:
+        SelectColDifference = "SELECT COUNT(coalesce("+latestTable+"." + col + ",\"~\")) FROM "+latestTable+", "+newTable+" WHERE " +latestTable+".ndc = "+newTable+".ndc AND "+ "(SELECT coalesce("+latestTable+"." + col + ",\"~\")) <> " + "(SELECT coalesce("+newTable+"." + col + ",\"~\"))"
+        #print(SelectColDifference)
+        c.execute(SelectColDifference)
+        for row in c:
+            #print(row)
+            #print(row[0])
+            #print(ColCount1[0][0])
+            change = str(int(row[0]) / int(ColCount1[0][0]) * 100)
+            print("Change of "+change+"% in "+ col)
+            if change != '0.0':
+                    hasChanged = 1
+
+    #delete newtable if there are no changes.
+    if (hasChanged == 0 and shrinkage == '0.0' and growth == '0.0'):
+        c.execute("DROP TABLE " + newTable)
+        conn.commit()
+        conn.close()
+        print("No changes. The newtable is deleted")
+        exit()
+    
+    conn.commit()
+    conn.close()
     textResult.delete('0.0',END)
     s = "No Change in number/values of columns\n---------------------------------"
     textResult.insert(INSERT, s)
