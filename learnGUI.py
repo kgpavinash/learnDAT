@@ -128,7 +128,7 @@ while index != int(fileCount):
     index = index + 1
 
 
-
+displayText = ""
 master = Tk()
 master.geometry('800x800')
 master.title("Data Acquisition Tool")
@@ -143,7 +143,7 @@ for e in columns:
         j = j + 4
         k = k + 1.35
         i = 0
-        print("hello")
+        # print("hello")
     lab = Label(master, text = e)
     lab.place(x = (i * 200), y = 10 * j)
     e = Entry(master,width=5)
@@ -195,6 +195,7 @@ def started():
     #print(columns)
     if len(columns) != len(latestColumns):
         print("The number of columns have changed.")
+        displayText = "The number of columns have changed\n"
         # c.execute(createQuery)
         # c.executemany(insertQuery, entries)
         # conn.commit()
@@ -207,6 +208,7 @@ def started():
     for i in range(len(latestColumns)):
         if columns[i] != latestColumns[i]:
                 print("The columns have changed.")
+                displayText = "The columns have changed\n"
                 # c.execute(createQuery)
                 # c.executemany(insertQuery, entries)
                 # conn.commit()
@@ -216,7 +218,7 @@ def started():
                 c.execute("commit")
                 conn.close()
                 exit()
-    
+    displayText = "No Change in number/values of columns\n---------------------------------\n"
     #I have to create a new table in order to do value comparison
     newTable = tableName
     # c.execute(createQuery)
@@ -264,6 +266,8 @@ def started():
     checkEmpty = 0
     print(str(rowsRemovedCount[0][0])+ " rows has been removed from the old table which had "+str(latestTableRowsCount[0][0]) + " rows")
     print(str(rowsAddedCount[0][0])+ " rows has been added to the new table which now has "+str(newTableRowsCount[0][0]) + " rows")
+    displayText = displayText + str(rowsRemovedCount[0][0])+ " rows has been removed from the old table which had "+str(latestTableRowsCount[0][0]) + " rows\n"
+    displayText = displayText + str(rowsAddedCount[0][0])+ " rows has been added to the new table which now has "+str(newTableRowsCount[0][0]) + " rows\n"
     if int(newTableRowsCount[0][0]) == 0:
         print("Shrinkage of 100%")
         print("Growth of 0%")
@@ -276,9 +280,10 @@ def started():
     if checkEmpty == 0:
         shrinkage = str(int(rowsRemovedCount[0][0]) / int(matchingNDCCount[0][0]) * 100)
         print("Shrinkage of "+shrinkage+"%")
-
+        displayText = displayText + "Shrinkage of "+shrinkage+"%\n"
         growth = str(int(rowsAddedCount[0][0]) / int(matchingNDCCount[0][0]) * 100)
         print("Growth of "+growth+"%")
+        displayText = displayText + "Growth of "+growth+"%\n"
     
     #Count number of values (including null) in a column (Maybe change this to just count rows in any one column. Same thing)
     SelectColCount1 = "SELECT COUNT(coalesce("+newTable+"." + latestColumns[0] + ",\"~\")) FROM " +newTable
@@ -299,6 +304,7 @@ def started():
             #print(ColCount1[0][0])
             change = str(int(row[0]) / int(ColCount1[0][0]) * 100)
             print("Change of "+change+"% in "+ col)
+            displayText = displayText + "Change of "+change+"% in "+ col + "\n"
             if change != '0.0':
                     hasChanged = 1
 
@@ -308,17 +314,19 @@ def started():
         conn.commit()
         conn.close()
         print("No changes. The newtable is deleted")
-        exit()
+        displayText = displayText + "No changes. The newtable is deleted"
+        textResult.delete('0.0',END)
+        textResult.insert(INSERT, displayText)
+        return
     
     conn.commit()
     conn.close()
     textResult.delete('0.0',END)
-    s = "No Change in number/values of columns\n---------------------------------"
-    textResult.insert(INSERT, s)
+    textResult.insert(INSERT, displayText)
     return
 def reset():
     textResult.delete('0.0',END)
-    textResult.insert(INSERT, "Process has reset")
+    textResult.insert(INSERT, "Shows the percentage change/rows removed results.")
 start = Button(text="Start", command=started)
 start.place(x = 630, y = 360)
 reset = Button(text="Reset", command=reset)
