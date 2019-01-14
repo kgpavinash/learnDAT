@@ -1,5 +1,4 @@
 from tkinter import *
-from math import *
 import sqlite3
 import json
 # top = Tk()
@@ -199,7 +198,9 @@ def started():
     #print(columns)
     if len(columns) != len(latestColumns):
         print("The number of columns have changed.")
+        textResult.delete('0.0',END)
         displayText = "The number of columns have changed\n"
+        textResult.insert(INSERT, displayText)
         # c.execute(createQuery)
         # c.executemany(insertQuery, entries)
         # conn.commit()
@@ -208,7 +209,8 @@ def started():
         c.executemany(insertQuery, entries)
         c.execute("commit")
         conn.close()
-        exit()
+        # exit()
+        return
     for i in range(len(latestColumns)):
         if columns[i] != latestColumns[i]:
                 print("The columns have changed.")
@@ -221,7 +223,8 @@ def started():
                 c.executemany(insertQuery, entries)
                 c.execute("commit")
                 conn.close()
-                exit()
+                # exit()
+                return
     displayText = "No Change in number/values of columns\n---------------------------------\n"
     #I have to create a new table in order to do value comparison
     newTable = tableName
