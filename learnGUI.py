@@ -144,10 +144,10 @@ for e in columns:
         k = k + 1.35
         i = 0
         # print("hello")
-    lab = Label(master, text = e)
+    lab = Label(master, text = e + " %")
     lab.place(x = (i * 200), y = 10 * j)
     e = Entry(master,width=5)
-    e.insert(0,"10%")
+    e.insert(0,"0")
     e.place(x = (i * 200), y = 30 * k)
     ents.append(e)
     i = i + 1
@@ -185,7 +185,11 @@ def started():
         c.executemany(insertQuery, entries)
         c.execute("commit")
         conn.close()
-        exit()
+        # exit()
+        textResult.delete('0.0',END)
+        displayText = "There are no tables"
+        textResult.insert(INSERT, displayText)
+        return
 
     #comparing columns
     latestTable = "table" + str(len(tables) - 1)
@@ -294,6 +298,7 @@ def started():
     
     #compare values of every element in each column between two tables where the NDC matches
     hasChanged = 0
+    i = 0
     for col in latestColumns:
         SelectColDifference = "SELECT COUNT(coalesce("+latestTable+"." + col + ",\"~\")) FROM "+latestTable+", "+newTable+" WHERE " +latestTable+".ndc = "+newTable+".ndc AND "+ "(SELECT coalesce("+latestTable+"." + col + ",\"~\")) <> " + "(SELECT coalesce("+newTable+"." + col + ",\"~\"))"
         #print(SelectColDifference)
@@ -307,6 +312,11 @@ def started():
             displayText = displayText + "Change of "+change+"% in "+ col + "\n"
             if change != '0.0':
                     hasChanged = 1
+            perc = ents[i].get()
+            if (int(perc) < int(float(change))):
+                displayText = displayText + "HUGE CHANGE!\n"
+            i = i + 1
+    i = 0
 
     #delete newtable if there are no changes.
     if (hasChanged == 0 and shrinkage == '0.0' and growth == '0.0'):
@@ -327,6 +337,10 @@ def started():
 def reset():
     textResult.delete('0.0',END)
     textResult.insert(INSERT, "Shows the percentage change/rows removed results.")
+    for e in ents:
+        e.delete(0,END)
+        e.insert(0,"0")
+
 start = Button(text="Start", command=started)
 start.place(x = 630, y = 360)
 reset = Button(text="Reset", command=reset)
