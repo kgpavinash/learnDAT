@@ -184,7 +184,8 @@ for col in latestColumns:
         #print(row)
         #print(row[0])
         #print(ColCount1[0][0])
-        change = str(int(row[0]) / int(ColCount1[0][0]) * 100)
+        change = str(int(row[0]) / int(matchingNDCCount[0][0]) * 100)
+        print("Changed value count of "+str(row[0])+" in "+ col)
         print("Change of "+change+"% in "+ col)
         if change != '0.0':
                 hasChanged = 1
