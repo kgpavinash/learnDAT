@@ -147,6 +147,7 @@ for row in c:
         #print(row)
         matchingNDCCount.append(row)
 
+print("inBothRowCount is "+str(matchingNDCCount[0][0]))
 checkEmpty = 0
 print(str(rowsRemovedCount[0][0])+ " rows has been removed from the old table which had "+str(latestTableRowsCount[0][0]) + " rows")
 print(str(rowsAddedCount[0][0])+ " rows has been added to the new table which now has "+str(newTableRowsCount[0][0]) + " rows")
@@ -160,10 +161,10 @@ if int(latestTableRowsCount[0][0]) == 0:
     checkEmpty = 1
 
 if checkEmpty == 0:
-    shrinkage = str(int(rowsRemovedCount[0][0]) / int(matchingNDCCount[0][0]) * 100)
+    shrinkage = str(int(rowsRemovedCount[0][0]) / int(latestTableRowsCount[0][0]) * 100)
     print("Shrinkage of "+shrinkage+"%")
     
-    growth = str(int(rowsAddedCount[0][0]) / int(matchingNDCCount[0][0]) * 100)
+    growth = str(int(rowsAddedCount[0][0]) / int(latestTableRowsCount[0][0]) * 100)
     print("Growth of "+growth+"%")
 
 #Count number of values (including null) in a column (Maybe change this to just count rows in any one column. Same thing)

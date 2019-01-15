@@ -19,7 +19,7 @@ resultMaxQuarter = client.get(medic_identifier, query=quarterQuery)
 # jsonFormatQuarter = json.dumps(resultMaxQuarter,indent=4)
 # dict_quarter = json.loads(jsonFormatQuarter)
 maxQuarter = resultMaxQuarter[0]['max_quarter']
-
+# maxQuarter = "2"
 #Queries to be used. Limited to 50,000 results per call. Get first 50,000. 
 finalQuery = 'SELECT * WHERE year = ' + maxyear +' AND quarter = '+maxQuarter+' ORDER BY ndc DESC LIMIT 50000'
 finalQuery2 = 'SELECT COUNT(*) WHERE year = ' + maxyear +' AND quarter = '+maxQuarter
@@ -60,7 +60,6 @@ print("-----")
 # f.write(str(countFile))
 
 #keep looping until no more results are obtained from socrata. Write to file every 50,000 results. increment file count and offset after every write.
-#maxQuarter = "2"
 countFiles = 0
 countOffset = 0
 while 1:
