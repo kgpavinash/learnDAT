@@ -2,7 +2,7 @@ import sqlite3
 import json
 
 #Connection to SQLite Database
-conn = sqlite3.connect('testing3.db',isolation_level=None)
+conn = sqlite3.connect('ACA.db',isolation_level=None)
 c = conn.cursor()
 
 #Get count of all tables in the database
@@ -39,15 +39,41 @@ while index != int(fileCount):
         i = i + 1
     index = index + 1
 
+f = open("identifier.txt", "r")
+identity = f.read()
+
 #Create the CREATE table query. For now, all datatypes are text. Clarify
 tableName = "table" + str(len(tables))
-createQuery = 'CREATE TABLE ' + tableName + "("
-for col in columns:
-    createQuery = createQuery + col + " text" + ","
-createQuery = createQuery + "PRIMARY KEY (year, quarter, ndc))"
-# print(createQuery)
+createQuery = ''
+if identity == 'v48d-4e3e':
+    createQuery = 'CREATE TABLE ' + tableName + "("
+    for col in columns:
+        createQuery = createQuery + col + " text" + ","
+        createQuery = createQuery + "PRIMARY KEY (year, quarter, ndc))"
 
-#calculate number of questions marks. Needed as synthax of insert is c.executemany("INSERT INTO table VALUES (?,?,?,?,?...)", entries)
+if identity == 'tau9-gfwr':
+    createQuery = 'CREATE TABLE ' + tableName + "("
+    #createQuery =  createQuery + "ndc text PRIMARY KEY,"
+    for col in columns:
+        if col != 'ndc':
+            createQuery = createQuery + col + " text" + ","
+        if col == 'ndc':
+            createQuery =  createQuery + "ndc text PRIMARY KEY,"
+    createQuery = createQuery[:-1] + ')'
+
+if identity == 'yns6-zx8k':
+    createQuery = 'CREATE TABLE ' + tableName + "("
+    for col in columns:
+        if col != 'ndc':
+            createQuery = createQuery + col + " text" + ","
+        if col == 'ndc':
+            createQuery =  createQuery + "ndc text PRIMARY KEY,"
+    createQuery = createQuery[:-1] + ')'
+
+print(createQuery)
+#exit()
+
+#calculate number of questions marks. Needed as synthax of insert is c.executemany("INSERT INTO table VALUES (?,?,?,?,?...)", entries). Order Matters!
 #Create INSERT query
 questionList = []
 for x in range(len(columns)):
@@ -114,13 +140,13 @@ c.execute("commit")
 
 #Outer joins to check if rows have been added/removed. Gets count of rows added/removed
 rowsRemovedCount = []
-leftJoinStatement = "SELECT COUNT(*) FROM "+latestTable+" LEFT OUTER JOIN "+newTable+" ON "+latestTable+".ndc = "+newTable+".ndc WHERE "+newTable+".year ISNULL"
+leftJoinStatement = "SELECT COUNT(*) FROM "+latestTable+" LEFT OUTER JOIN "+newTable+" ON "+latestTable+".ndc = "+newTable+".ndc WHERE "+newTable+".ndc ISNULL"
 c.execute(leftJoinStatement)
 for row in c:
     #print(row)
     rowsRemovedCount.append(row)
 rowsAddedCount = []
-revLeftJoinStatement = "SELECT COUNT(*) FROM "+newTable+" LEFT OUTER JOIN "+latestTable+" ON "+latestTable+".ndc = "+newTable+".ndc WHERE "+latestTable+".year ISNULL"
+revLeftJoinStatement = "SELECT COUNT(*) FROM "+newTable+" LEFT OUTER JOIN "+latestTable+" ON "+latestTable+".ndc = "+newTable+".ndc WHERE "+latestTable+".ndc ISNULL"
 c.execute(revLeftJoinStatement)
 for row in c:
     #print(row)
