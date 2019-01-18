@@ -2,7 +2,7 @@ import sqlite3
 import json
 
 #Connection to SQLite Database
-conn = sqlite3.connect('testing3.db',isolation_level=None)
+conn = sqlite3.connect('ACA.db',isolation_level=None)
 c = conn.cursor()
 
 #Get count of all tables in the database
@@ -202,6 +202,9 @@ for row in c:
 
 #compare values of every element in each column between two tables where the NDC matches
 hasChanged = 0
+if (matchingNDCCount[0][0] == 0):
+    print("inBothCount is 0")
+    # matchingNDCCount[0][0] = 1
 for col in latestColumns:
     SelectColDifference = "SELECT COUNT(coalesce("+latestTable+"." + col + ",\"~\")) FROM "+latestTable+", "+newTable+" WHERE " +latestTable+".ndc = "+newTable+".ndc AND "+ "(SELECT coalesce("+latestTable+"." + col + ",\"~\")) <> " + "(SELECT coalesce("+newTable+"." + col + ",\"~\"))"
     #print(SelectColDifference)

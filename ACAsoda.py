@@ -14,11 +14,12 @@ maxyear = resultMaxYear[0]['max_year']
 monthQuery = 'SELECT MAX(month) where year = ' +maxyear
 resultMaxMonth = client.get(medic_identifier, query=monthQuery)
 maxMonth = resultMaxMonth[0]['max_month']
+maxMonth = '11'
 # print(maxMonth)
 
-# countQuery = 'SELECT count(*) WHERE year = '+maxyear+' AND month = '+maxMonth
-# countResult = client.get(medic_identifier,query=countQuery)
-# print(countResult)
+countQuery = 'SELECT count(*) WHERE year = '+maxyear+' AND month = '+maxMonth
+countResult = client.get(medic_identifier,query=countQuery)
+print(countResult)
 
 countFiles = 0
 countOffset = 0
