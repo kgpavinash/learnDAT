@@ -2,7 +2,7 @@ import sqlite3
 import json
 
 #Connection to SQLite Database
-conn = sqlite3.connect('ACA.db',isolation_level=None)
+conn = sqlite3.connect('testing3.db',isolation_level=None)
 c = conn.cursor()
 
 #Get count of all tables in the database
@@ -49,7 +49,7 @@ if identity == 'v48d-4e3e':
     createQuery = 'CREATE TABLE ' + tableName + "("
     for col in columns:
         createQuery = createQuery + col + " text" + ","
-        createQuery = createQuery + "PRIMARY KEY (year, quarter, ndc))"
+    createQuery = createQuery + "PRIMARY KEY (year, quarter, ndc))"
 
 if identity == 'tau9-gfwr':
     createQuery = 'CREATE TABLE ' + tableName + "("

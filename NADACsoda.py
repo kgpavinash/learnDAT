@@ -35,3 +35,6 @@ while 1:
 
 f = open("countFiles.txt", "w+")
 f.write(str(countFiles))
+
+f = open("identifier.txt","w+")
+f.write(str(medic_identifier))
