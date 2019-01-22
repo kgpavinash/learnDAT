@@ -1,8 +1,17 @@
 import sqlite3
 import json
 
+f = open("identifier.txt", "r")
+identity = f.read()
+
 #Connection to SQLite Database
-conn = sqlite3.connect('ACA.db',isolation_level=None)
+conn = ""
+if identity == 'v48d-4e3e':
+    conn = sqlite3.connect('MDR.db',isolation_level=None)
+if identity == 'tau9-gfwr':
+    conn = sqlite3.connect('NADAC.db',isolation_level=None)
+if identity == 'yns6-zx8k':
+    conn = sqlite3.connect('ACA.db',isolation_level=None)
 c = conn.cursor()
 
 #Get count of all tables in the database
@@ -38,9 +47,6 @@ while index != int(fileCount):
         allData = []
         i = i + 1
     index = index + 1
-
-f = open("identifier.txt", "r")
-identity = f.read()
 
 #Create the CREATE table query. For now, all datatypes are text. Clarify
 tableName = "table" + str(len(tables))
