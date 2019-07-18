@@ -50,16 +50,18 @@ dfNameAndRiskIDAndREMSID = pd.merge(temp,dfNamesAndREMSID, how='inner', left_on 
 #Replacing the ` with nothing in Application_Number in dfREMS_Products (Application Number is from Website, Not Apollo)
 dfREMS_Products["Application_Number"] = dfREMS_Products["Application_Number"].apply(lambda x:(x.replace("`","")))
 dfREMSIDAndApplicationNumber = pd.merge(dfNameAndRiskIDAndREMSID,dfREMS_Products, how = 'inner',left_on = 'REMSID', right_on = 'REMSID')[['Description','Risk ID','REMSID','Application_Number']]
+dfREMSIDAndApplicationNumber = dfREMSIDAndApplicationNumber.astype(str)
 
 #(Application Number is from Apollo)
 dfNDCAndRISK_ID = pd.read_excel(r"C:\Users\aprabhakar\Desktop\Access DB - Like SDI\RHRMNDL0_NDC_RISK_LINK.xlsx")
 dfNDCAndAPPL_NO = pd.read_excel(r"C:\Users\aprabhakar\Desktop\Access DB - Like SDI\RAPPLNA0_FDA_NDC_APPL.xlsx")
 dfRISK_IDAndAPPL_NO = pd.merge(dfNDCAndRISK_ID,dfNDCAndAPPL_NO, how = 'inner',left_on = 'NDC', right_on = 'NDC')[['RISK_ID','APPL_NO']]
+dfRISK_IDAndAPPL_NO = dfRISK_IDAndAPPL_NO.drop_duplicates()
 dfRISK_IDAndAPPL_NO = dfRISK_IDAndAPPL_NO.astype(str)
 
 
 dfApolloAppNumberAndWebAppNumber = pd.merge(dfREMSIDAndApplicationNumber,dfRISK_IDAndAPPL_NO, how = 'inner',left_on = 'Risk ID', right_on = 'RISK_ID')
-
+dfEmptyAppNumberInApollo = dfApolloAppNumberAndWebAppNumber[dfApolloAppNumberAndWebAppNumber['APPL_NO'] == 'Other']
 
 
 # After running the above, you should have close to the following:
